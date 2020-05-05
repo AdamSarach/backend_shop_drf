@@ -1,9 +1,19 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth import get_user_model
+from django.conf import settings
+
+
+class User(AbstractUser):
+    pass
+
+    def __str__(self):
+        return self.username
 
 
 class Supplier(models.Model):
     """Keep suppliers' personal data."""
-    sup_id = models.PositiveIntegerField(primary_key=True)
+    sup_id = models.AutoField(primary_key=True)
     sup_name = models.CharField(max_length=50, unique=True)
     sup_status = models.CharField(max_length=30, blank=True)
     sup_email = models.EmailField()
@@ -19,3 +29,39 @@ class Supplier(models.Model):
     def full_address(self):
         """The full way of addressing a supplier"""
         return '{}, {}, {} {}'.format(self.sup_name, self.sup_address, self.sup_postal_code, self.sup_city)
+
+
+class Product(models.Model):
+    PIPES = 'PI'
+    FITTINGS = 'FI'
+    VALVES = 'VA'
+    WELD_AND_THREAD = 'WT'
+    CATEGORY_CHOICES = [(PIPES, 'Pipes'),
+                        (FITTINGS, 'Fittings'),
+                        (VALVES, 'Valves'),
+                        (WELD_AND_THREAD, 'Welds and threads')]
+
+    pr_id = models.AutoField(primary_key=True)
+    pr_name = models.CharField(max_length=50)
+    pr_cat = models.CharField(max_length=2, choices=CATEGORY_CHOICES)
+    pr_price = models.DecimalField(max_digits=8, decimal_places=2)
+    pr_sup = models.ForeignKey(Supplier, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return self.pr_name
+
+
+def get_sentinel_user():
+    return get_user_model().objects.get_or_create(username='deleted')[0]
+
+
+class Order(models.Model):
+    or_id = models.AutoField(primary_key=True)
+    or_start_date = models.DateTimeField(auto_now_add=True)
+    or_is_finished = models.BooleanField(default=False)
+    or_finish_date = models.DateTimeField(null=True)
+    or_is_sent = models.BooleanField(default=False)
+    or_sent_date = models.DateTimeField(null=True)
+    or_username = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET(get_sentinel_user))
+
+
