@@ -5,8 +5,8 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
 
-from restapi.models import Supplier, Product
-from restapi.serializers import SupplierSerializer, ProductSerializer
+from restapi.models import Supplier, Product, Order, User
+from restapi.serializers import SupplierSerializer, ProductSerializer, OrderSerializer
 
 
 class TestSupplierListView(APITestCase):
@@ -167,5 +167,47 @@ class TestProductDetailView(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_product_detail_delete(self):
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class TestOrderListView(APITestCase):
+
+    def setUp(self):
+        self.url = reverse('order-list')
+        self.test_user = User.objects.create(username='firstuser',
+                                             password='testpass1')
+        self.valid_user = User.objects.get(username='firstuser')
+        self.data_valid = {"or_username": self.valid_user.id}
+
+    def test_order_list_create(self):
+        response_valid = self.client.post(self.url, self.data_valid, format='json')
+        self.assertEqual(response_valid.status_code, status.HTTP_201_CREATED)
+
+
+class TestOrderDetailView(APITestCase):
+
+    def setUp(self):
+        self.test_user = User.objects.create(username='firstuser',
+                                             password='testpass1')
+        self.test_user2 = User.objects.create(username='seconduser',
+                                              password='testpass1')
+        self.or1 = Order.objects.create(or_username=self.test_user)
+        self.url = reverse('order-detail', kwargs={'pk': self.or1.or_id})
+
+    def test_order_detail_retrieve(self):
+        response = self.client.get(self.url)
+        get_pr1 = Order.objects.get(pk=self.or1.or_id)
+        serializer = OrderSerializer(get_pr1)
+        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_order_detail_update(self):
+        self.data = OrderSerializer(self.or1).data
+        self.data.update({'or_username': self.test_user2.id})
+        response = self.client.put(reverse('order-detail', args=[self.or1.or_id]), self.data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_order_detail_delete(self):
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

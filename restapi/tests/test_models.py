@@ -50,4 +50,5 @@ class TestModelOrder(APITestCase):
         self.assertEquals(self.test_user.username, 'firstuser')
         self.assertNotEquals(self.test_user.username, 'seconduser')
         self.assertIsNotNone(self.test_order.or_start_date)
+        print(self.test_order.or_start_date)
 

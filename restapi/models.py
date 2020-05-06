@@ -64,4 +64,7 @@ class Order(models.Model):
     or_sent_date = models.DateTimeField(null=True)
     or_username = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET(get_sentinel_user))
 
+    def __str__(self):
+        return 'Order No. {}, started {}'.format(self.or_id, self.or_start_date)
+
 
