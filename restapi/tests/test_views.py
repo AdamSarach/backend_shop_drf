@@ -4,9 +4,11 @@ from rest_framework.test import RequestsClient
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
+from rest_framework.permissions import IsAuthenticated
 
 from restapi.models import Supplier, Product, Order, User
 from restapi.serializers import SupplierSerializer, ProductSerializer, OrderSerializer
+from django.contrib.auth.models import Group
 
 
 class TestSupplierListView(APITestCase):
@@ -174,15 +176,51 @@ class TestProductDetailView(APITestCase):
 class TestOrderListView(APITestCase):
 
     def setUp(self):
-        self.url = reverse('order-list')
-        self.test_user = User.objects.create(username='firstuser',
-                                             password='testpass1')
-        self.valid_user = User.objects.get(username='firstuser')
-        self.data_valid = {"or_username": self.valid_user.id}
 
-    def test_order_list_create(self):
+        self.user_customer1 = User.objects.create_user(username='firstuser',
+                                                  password='testpass1')
+        self.client = APIClient()
+        self.user_customer2 = User.objects.create(username='seconduser',
+                                                  password='testpass1')
+        self.user_employee = User.objects.create(username='empnewbie',
+                                                 password='testpass1')
+        self.group_employee = Group.objects.create(name='employee')
+        self.group_customer = Group.objects.create(name='customer')
+        self.user_customer1.save()
+        self.user_customer2.save()
+        self.user_employee.save()
+        self.group_employee.save()
+        self.group_customer.save()
+
+        self.user_customer1.groups.add(self.group_customer)
+        self.user_customer2.groups.add(self.group_customer)
+        self.user_employee.groups.add(self.group_employee)
+
+        self.url = reverse('order-list')
+
+    def test_order_list_create_same_customer(self):
+
+        self.client.login(username='firstuser', password='testpass1')
+        self.assertTrue(self.client.login(username='firstuser', password='testpass1'))
+        self.data_valid = {}
+        self.data_invalid = {'or_username': self.user_customer2.id}
         response_valid = self.client.post(self.url, self.data_valid, format='json')
+        response_invalid = self.client.post(self.url, self.data_invalid, format='json')
+
         self.assertEqual(response_valid.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response_invalid.status_code, status.HTTP_400_BAD_REQUEST)
+        # print(response_invalid.data)
+
+    # def test_order_list_create_another_customer(self):
+    #     return True
+    #
+    # def test_order_list_retrieve(self):
+    #     response = self.client.get(self.url)
+    #     product = Product.objects.all()
+    #     serializer = ProductSerializer(product, many=True)
+    #     self.assertEqual(Product.objects.count(), 1)
+    #     self.assertEqual(response.data, serializer.data)
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class TestOrderDetailView(APITestCase):
