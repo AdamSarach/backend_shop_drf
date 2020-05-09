@@ -42,19 +42,19 @@ class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
 class OrderList(APIView):
     def get(self, request, format=None):
         permission_classes = (IsAuthenticated & (IsCustomerGroup | IsEmployeeGroup))
-        if IsCustomerGroup:
+        if request.user.groups.filter(name='customer'):
             orders = Order.objects.filter(or_username=request.user)
-        elif IsEmployeeGroup:
+        elif request.user.groups.filter(name='employee'):
             orders = Order.objects.all()
         serializer = OrderSerializer(orders, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
         permission_classes = (IsAuthenticated & (IsCustomerGroup | IsEmployeeGroup))
-        if IsCustomerGroup:
+        if request.user.groups.filter(name='customer'):
             content = {"or_username": request.user.id}
             serializer = OrderSerializer(data=content)
-        elif IsEmployeeGroup:
+        elif request.user.groups.filter(name='employee'):
             serializer = OrderSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
