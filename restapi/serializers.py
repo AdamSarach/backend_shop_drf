@@ -20,3 +20,12 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['or_id', 'or_start_date', 'or_is_finished', 'or_finish_date', 'or_is_sent', 'or_sent_date',
                   'or_username']
+
+
+class OrderUpdateCustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ['or_id', 'or_start_date', 'or_is_finished', 'or_finish_date', 'or_username']
+        read_only_fields = ['or_id', 'or_start_date', 'or_finish_date', 'or_username']
+
+

@@ -7,7 +7,7 @@ from django.urls import reverse
 from rest_framework.permissions import IsAuthenticated
 
 from restapi.models import Supplier, Product, Order, User
-from restapi.serializers import SupplierSerializer, ProductSerializer, OrderSerializer
+from restapi.serializers import SupplierSerializer, ProductSerializer, OrderSerializer, OrderEmployeeSerializer
 from django.contrib.auth.models import Group
 
 
@@ -242,6 +242,16 @@ class TestOrderListView(APITestCase):
         self.assertEqual(response_valid.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_invalid.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_order_list_create_retrieve_unauthenticated(self):
+        self.data1 = {'or_username': self.user_customer1.id}
+        self.data2 = {}
+        response_get = self.client.get(self.url)
+        self.assertEqual(response_get.status_code, status.HTTP_403_FORBIDDEN)
+        response_post1 = self.client.post(self.url, self.data1, format='json')
+        self.assertEqual(response_post1.status_code, status.HTTP_403_FORBIDDEN)
+        response_post2 = self.client.post(self.url, self.data1, format='json')
+        self.assertEqual(response_post2.status_code, status.HTTP_403_FORBIDDEN)
+
 
 class TestOrderDetailView(APITestCase):
 
@@ -260,7 +270,7 @@ class TestOrderDetailView(APITestCase):
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_order_detail_update(self):
+    def test_order_detail_update_employee(self):
         self.data = OrderSerializer(self.or1).data
         self.data.update({'or_username': self.test_user2.id})
         response = self.client.put(reverse('order-detail', args=[self.or1.or_id]), self.data, format='json')
