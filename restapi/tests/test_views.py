@@ -5,6 +5,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
 from rest_framework.permissions import IsAuthenticated
+from django.utils import timezone
 
 from restapi.models import Supplier, Product, Order, User
 from restapi.serializers import SupplierSerializer, ProductSerializer, OrderSerializer
@@ -242,30 +243,103 @@ class TestOrderListView(APITestCase):
         self.assertEqual(response_valid.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_invalid.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_order_list_create_retrieve_unauthenticated(self):
+        self.data1 = {'or_username': self.user_customer1.id}
+        self.data2 = {}
+        response_get = self.client.get(self.url)
+        self.assertEqual(response_get.status_code, status.HTTP_403_FORBIDDEN)
+        response_post1 = self.client.post(self.url, self.data1, format='json')
+        self.assertEqual(response_post1.status_code, status.HTTP_403_FORBIDDEN)
+        response_post2 = self.client.post(self.url, self.data1, format='json')
+        self.assertEqual(response_post2.status_code, status.HTTP_403_FORBIDDEN)
+
 
 class TestOrderDetailView(APITestCase):
 
     def setUp(self):
-        self.test_user = User.objects.create(username='firstuser',
-                                             password='testpass1')
-        self.test_user2 = User.objects.create(username='seconduser',
-                                              password='testpass1')
-        self.or1 = Order.objects.create(or_username=self.test_user)
-        self.url = reverse('order-detail', kwargs={'pk': self.or1.or_id})
+        self.client = APIClient()
+        self.user_customer1 = User.objects.create_user(username='firstuser',
+                                                       password='testpass1')
 
-    def test_order_detail_retrieve(self):
+        self.user_customer2 = User.objects.create_user(username='seconduser',
+                                                       password='testpass1')
+        self.user_employee = User.objects.create_user(username='empnewbie',
+                                                      password='testpass1')
+        self.group_employee = Group.objects.create(name='employee')
+        self.group_customer = Group.objects.create(name='customer')
+
+        self.user_customer1.save()
+        self.user_customer2.save()
+        self.user_employee.save()
+        self.group_employee.save()
+        self.group_customer.save()
+
+        # Sample orders to manipulate
+        self.or1 = Order.objects.create(or_username=self.user_customer1)
+        self.or2 = Order.objects.create(or_username=self.user_customer1, or_is_finished=True)
+        self.or3 = Order.objects.create(or_username=self.user_customer2)
+
+        self.user_customer1.groups.add(self.group_customer)
+        self.user_customer2.groups.add(self.group_customer)
+        self.user_employee.groups.add(self.group_employee)
+
+        self.url = reverse('order-detail', kwargs={'pk': self.or1.or_id})
+        self.url_another_customer = reverse('order-detail', kwargs={'pk': self.or3.or_id})
+
+    def test_order_detail_unauthenticated(self):
         response = self.client.get(self.url)
-        get_pr1 = Order.objects.get(pk=self.or1.or_id)
-        serializer = OrderSerializer(get_pr1)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        response_delete = self.client.delete(self.url)
+        self.assertEqual(response_delete.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_order_detail_retrieve_employee(self):
+        self.client.login(username='empnewbie', password='testpass1')
+        response = self.client.get(self.url)
+        get_or1 = Order.objects.get(pk=self.or1.or_id)
+        serializer = OrderSerializer(get_or1)
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_order_detail_update(self):
+    def test_order_detail_retrieve_customer(self):
+        self.client.login(username='firstuser', password='testpass1')
+        response = self.client.get(self.url)
+        get_or1 = Order.objects.get(pk=self.or1.or_id)
+        serializer = OrderSerializer(get_or1)
+        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_another = self.client.get(self.url_another_customer)
+        self.assertEqual(response_another.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_order_detail_update_employee(self):
+        self.client.login(username='empnewbie', password='testpass1')
         self.data = OrderSerializer(self.or1).data
-        self.data.update({'or_username': self.test_user2.id})
+        self.data.update({'or_username': self.user_customer2.id, 'or_is_sent': True})
         response = self.client.put(reverse('order-detail', args=[self.or1.or_id]), self.data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_order_detail_delete(self):
+    def test_order_detail_update_customer_valid(self):
+        self.client.login(username='firstuser', password='testpass1')
+        response_valid1 = self.client.put(reverse('order-detail', args=[self.or1.or_id]), format='json')
+        self.assertEqual(response_valid1.status_code, status.HTTP_200_OK)
+
+    def test_order_detail_update_customer_invalid(self):
+        self.client.login(username='firstuser', password='testpass1')
+        # Other customer's order
+        response_invalid1 = self.client.put(reverse('order-detail', args=[self.or3.or_id]), format='json')
+        self.assertEqual(response_invalid1.status_code, status.HTTP_400_BAD_REQUEST)
+        # Order marked as finished
+        response_invalid2 = self.client.put(reverse('order-detail', args=[self.or2.or_id]), format='json')
+        self.assertEqual(response_invalid2.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_order_detail_delete_customer(self):
+        self.client.login(username='firstuser', password='testpass1')
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        response = self.client.delete(self.url_another_customer)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_order_detail_delete_employee(self):
+        self.client.login(username='empnewbie', password='testpass1')
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
