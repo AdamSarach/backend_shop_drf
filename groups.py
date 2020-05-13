@@ -3,7 +3,7 @@ import django
 
 from django.contrib.auth.models import Group
 
-'''Add user groups to Group Model when new db is created by code in console $ python groups.py'''
+# Add user groups to Group Model when new db is created by code in console $ python groups.py
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 django.setup()
