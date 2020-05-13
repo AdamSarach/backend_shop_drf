@@ -8,9 +8,10 @@ from rest_framework import status
 from django.http import Http404
 from django.utils import timezone
 
-from restapi.models import Supplier, Product, Order
-from restapi.serializers import SupplierSerializer, ProductSerializer, OrderSerializer
-from restapi.permissions import IsOrderOwner, IsEmployeeGroup, IsCustomerGroup
+from restapi.models import Supplier, Product, Order, ProductsInOrders
+from restapi.serializers import SupplierSerializer, ProductSerializer, OrderSerializer, \
+    OrderProductsSerializer, OrderGetSerializer
+from restapi.permissions import IsOrderOwner, IsEmployeeGroup, IsCustomerGroup, ReadOnly
 
 
 def index(request):
@@ -18,27 +19,31 @@ def index(request):
 
 
 class SupplierList(generics.ListCreateAPIView):
+    permission_classes = (IsEmployeeGroup,)
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
 
 
 class SupplierDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsEmployeeGroup,)
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
 
 
 class ProductList(generics.ListCreateAPIView):
+    permission_classes = ((IsEmployeeGroup | ReadOnly),)
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
 
 class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = ((IsEmployeeGroup | ReadOnly),)
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
 
 class OrderList(APIView):
-    permission_classes = ((IsAuthenticated & (IsCustomerGroup | IsEmployeeGroup)),)
+    permission_classes = ((IsCustomerGroup | IsEmployeeGroup),)
 
     def get(self, request, format=None):
         if request.user.groups.filter(name='customer'):
@@ -60,12 +65,8 @@ class OrderList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class OrderDetail(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Order.objects.all()
-#     serializer_class = OrderSerializer
-
 class OrderDetail(APIView):
-    permission_classes = ((IsAuthenticated & (IsCustomerGroup | IsEmployeeGroup)),)
+    permission_classes = ((IsCustomerGroup | IsEmployeeGroup),)
 
     def order_wrong(self):
         return {'message': 'You cannot access an order which isnt yours.'}
@@ -83,9 +84,10 @@ class OrderDetail(APIView):
                 return Response(self.order_wrong(), status=status.HTTP_400_BAD_REQUEST)
         elif request.user.groups.filter(name='employee'):
             order = self.get_object(pk)
-
-        serializer = OrderSerializer(order)
-        return Response(serializer.data)
+        order_serializer = OrderGetSerializer(order)
+        return Response({'order_info': order_serializer.data,
+                         'total_price': order.total_price,
+                         })
 
     def put(self, request, pk, format=None):
         """

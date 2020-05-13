@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from rest_framework.permissions import SAFE_METHODS
 
 '''Own permissions i.e. for model owner or selected group'''
 
@@ -26,3 +27,8 @@ class IsCustomerGroup(permissions.BasePermission):
         if request.user and request.user.groups.filter(name='customer'):
             return True
         return False
+
+
+class ReadOnly(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.method in SAFE_METHODS

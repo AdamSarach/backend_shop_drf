@@ -35,8 +35,8 @@ class TestModelProduct(APITestCase):
 
     def test_product_name(self):
         self.assertEquals(self.test_product.pr_name, '316 SS')
-        # self.assertNotEquals(self.test_supplier.sup_name, 'NOT 316 SS')
-        # self.assertEquals(self.test_product.pr_sup.sup_id, self.test_supplier.sup_id)
+        self.assertNotEquals(self.test_supplier.sup_name, 'NOT 316 SS')
+        self.assertEquals(self.test_product.pr_sup.sup_id, self.test_supplier.sup_id)
 
 
 class TestModelOrder(APITestCase):
@@ -74,5 +74,5 @@ class TestModelProductsInOrder(APITestCase):
         self.test_item = ProductsInOrders.objects.create(or_id=self.test_order,
                                                          pr_id=self.test_product,
                                                          amount=5)
-        self.assertIsInstance(self.test_item, Order)
+        self.assertIsInstance(self.test_item, ProductsInOrders)
 
