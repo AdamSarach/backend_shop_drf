@@ -335,17 +335,6 @@ class TestOrderDetailView(APITestCase):
                                           pr_sup=self.test_supplier,
                                           )
 
-        self.pio1 = ProductsInOrders.objects.create(or_id=Order.objects.get(or_id=1),
-                                                    pr_id=Product.objects.get(pr_id=1),
-                                                    amount=3)
-
-        self.pio2 = ProductsInOrders.objects.create(or_id=Order.objects.get(or_id=1),
-                                                    pr_id=Product.objects.get(pr_id=2),
-                                                    amount=13)
-        self.pio3 = ProductsInOrders.objects.create(or_id=Order.objects.get(or_id=2),
-                                                    pr_id=Product.objects.get(pr_id=2),
-                                                    amount=8)
-
         self.url = reverse('order-detail', kwargs={'pk': self.or1.or_id})
         self.url_another_customer = reverse('order-detail', kwargs={'pk': self.or3.or_id})
 
@@ -402,6 +391,137 @@ class TestOrderDetailView(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_order_detail_delete_employee(self):
+        self.client.login(username='empnewbie', password='testpass1')
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class TestOrderItemsView(APITestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user_customer1 = User.objects.create_user(username='firstuser',
+                                                       password='testpass1')
+
+        self.user_customer2 = User.objects.create_user(username='seconduser',
+                                                       password='testpass1')
+        self.user_employee = User.objects.create_user(username='empnewbie',
+                                                      password='testpass1')
+        self.group_employee = Group.objects.create(name='employee')
+        self.group_customer = Group.objects.create(name='customer')
+
+        self.user_customer1.save()
+        self.user_customer2.save()
+        self.user_employee.save()
+        self.group_employee.save()
+        self.group_customer.save()
+
+        # Sample orders to check[GET] for list
+        self.or1 = Order.objects.create(or_username=self.user_customer1)
+        self.or2 = Order.objects.create(or_username=self.user_customer1)
+        self.or3 = Order.objects.create(or_username=self.user_customer2)
+        self.or3 = Order.objects.create(or_username=self.user_employee)
+
+        self.user_customer1.groups.add(self.group_customer)
+        self.user_customer2.groups.add(self.group_customer)
+        self.user_employee.groups.add(self.group_employee)
+
+        self.test_supplier = Supplier.objects.create(sup_name="Pipes Weld",
+                                                     sup_status='',
+                                                     sup_email='pipeweld@pipeweld.com',
+                                                     sup_phone_number=222555666,
+                                                     sup_postal_code='00-220',
+                                                     sup_city='Warsaw',
+                                                     sup_address='Wiejska 18'
+                                                     )
+
+        self.pr1 = Product.objects.create(pr_name='316 SS',
+                                          pr_cat='PI',
+                                          pr_price=1000,
+                                          pr_sup=self.test_supplier,
+                                          )
+        self.url = reverse('order-item', kwargs={'pk': self.or1.or_id})
+
+    def test_order_item_create_employee(self):
+        self.client.login(username='empnewbie', password='testpass1')
+        self.data_valid = {"pr_id": 1, "amount": 25}
+        response_valid = self.client.post(self.url, self.data_valid, format='json')
+        self.assertEqual(response_valid.status_code, status.HTTP_201_CREATED)
+
+
+class TestOrderItemDetailView(APITestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user_customer1 = User.objects.create_user(username='firstuser',
+                                                       password='testpass1')
+
+        self.user_customer2 = User.objects.create_user(username='seconduser',
+                                                       password='testpass1')
+        self.user_employee = User.objects.create_user(username='empnewbie',
+                                                      password='testpass1')
+        self.group_employee = Group.objects.create(name='employee')
+        self.group_customer = Group.objects.create(name='customer')
+
+        self.user_customer1.save()
+        self.user_customer2.save()
+        self.user_employee.save()
+        self.group_employee.save()
+        self.group_customer.save()
+
+        # Sample orders to check[GET] for list
+        self.or1 = Order.objects.create(or_username=self.user_customer1)
+        self.or2 = Order.objects.create(or_username=self.user_customer1)
+        self.or3 = Order.objects.create(or_username=self.user_customer2)
+        self.or3 = Order.objects.create(or_username=self.user_employee)
+
+        self.user_customer1.groups.add(self.group_customer)
+        self.user_customer2.groups.add(self.group_customer)
+        self.user_employee.groups.add(self.group_employee)
+
+        self.test_supplier = Supplier.objects.create(sup_name="Pipes Weld",
+                                                     sup_status='',
+                                                     sup_email='pipeweld@pipeweld.com',
+                                                     sup_phone_number=222555666,
+                                                     sup_postal_code='00-220',
+                                                     sup_city='Warsaw',
+                                                     sup_address='Wiejska 18'
+                                                     )
+
+        self.pr1 = Product.objects.create(pr_name='316 SS',
+                                          pr_cat='PI',
+                                          pr_price=1000,
+                                          pr_sup=self.test_supplier,
+                                          )
+
+        self.pr2 = Product.objects.create(pr_name='304 SS',
+                                          pr_cat='PI',
+                                          pr_price=500,
+                                          pr_sup=self.test_supplier,
+                                          )
+
+        self.pio1 = ProductsInOrders.objects.create(or_id=Order.objects.get(or_id=1),
+                                                    pr_id=Product.objects.get(pr_id=1),
+                                                    amount=3)
+
+        self.pio2 = ProductsInOrders.objects.create(or_id=Order.objects.get(or_id=1),
+                                                    pr_id=Product.objects.get(pr_id=2),
+                                                    amount=13)
+        self.pio3 = ProductsInOrders.objects.create(or_id=Order.objects.get(or_id=2),
+                                                    pr_id=Product.objects.get(pr_id=2),
+                                                    amount=8)
+
+        self.url = reverse('order-item-detail', kwargs={'pk': self.or1.or_id, 'item': self.pio1.id})
+
+    def test_order_item_detail_update_employee(self):
+        self.client.login(username='empnewbie', password='testpass1')
+        self.data = {ProductsInOrders(self.pio1).data}
+        self.data.update({'amount': 5})
+        response = self.client.put(reverse('order-item-detail', kwargs={'pk': self.or1.or_id, 'item': self.pio1.id}),
+                                   self.data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_order_item_detail_delete_employee(self):
         self.client.login(username='empnewbie', password='testpass1')
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

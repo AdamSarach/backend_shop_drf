@@ -187,7 +187,7 @@ class OrderItemDetail(APIView):
         if not order.or_is_finished:
             serializer = ProductsInOrdersSerializer(item_exist, data=request.data, partial=True)
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(update_fields=["amount"])
                 return Response(serializer.data, status.HTTP_200_OK)
         else:
             return Response(self.order_finished(), status=status.HTTP_400_BAD_REQUEST)
