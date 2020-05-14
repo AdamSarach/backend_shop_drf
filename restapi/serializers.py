@@ -22,6 +22,12 @@ class OrderSerializer(serializers.ModelSerializer):
                   'or_username']
 
 
+class ProductsInOrdersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductsInOrders
+        fields = ['or_id', 'pr_id', 'amount']
+
+
 class ProductDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
