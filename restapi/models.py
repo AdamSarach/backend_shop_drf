@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.db.models import Sum, F, ExpressionWrapper, DecimalField
 
 
 class User(AbstractUser):
@@ -67,4 +68,17 @@ class Order(models.Model):
     def __str__(self):
         return 'Order No. {}, started {}'.format(self.or_id, self.or_start_date)
 
+    @property
+    def total_price(self):
+        order_price = self.items_in_order.all().aggregate(
+            price=ExpressionWrapper(Sum(F('amount') * F('pr_id__pr_price')), output_field=DecimalField()))
+        return order_price
 
+
+class ProductsInOrders(models.Model):
+    or_id = models.ForeignKey(Order, on_delete=models.PROTECT, related_name='items_in_order', db_column='or_id')
+    pr_id = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='chosen_products', db_column='pr_id')
+    amount = models.IntegerField()
+
+    def __str__(self):
+        return 'Order No. {}, Product: {}, Amount: {}'.format(self.or_id.or_id, self.pr_id.pr_name, self.amount)

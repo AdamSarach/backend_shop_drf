@@ -1,5 +1,83 @@
-[{"model": "restapi.user", "pk": 1,
-  "fields": {
+[
+  {
+    "model": "restapi.supplier",
+    "pk": 1,
+    "fields": {
+      "sup_name": "Pipe Valves",
+      "sup_status": "",
+      "sup_email": "pipevalves@pipevalves.com",
+      "sup_phone_number": 444555666,
+      "sup_postal_code": "00-220",
+      "sup_city": "Warsaw",
+      "sup_address": "Wiejska 12"
+    }
+  },
+  {
+    "model": "restapi.product",
+    "pk": 1,
+    "fields": {
+      "pr_name": "304 SS",
+      "pr_cat": "PI",
+      "pr_price": "500.00",
+      "pr_sup": 1
+    }
+  },
+  {
+    "model": "restapi.product",
+    "pk": 2,
+    "fields": {
+      "pr_name": "316 SS",
+      "pr_cat": "PI",
+      "pr_price": "700.00",
+      "pr_sup": 1
+    }
+  },
+  {
+    "model": "restapi.productsinorders",
+    "pk": 1,
+    "fields": {
+      "or_id": 1,
+      "pr_id": 1,
+      "amount": 17
+    }
+  },
+  {
+    "model": "restapi.productsinorders",
+    "pk": 2,
+    "fields": {
+      "or_id": 1,
+      "pr_id": 2,
+      "amount": 3
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+      "name": "admin",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+      "name": "employee",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 3,
+    "fields": {
+      "name": "customer",
+      "permissions": []
+    }
+  },
+  {
+    "model": "restapi.user",
+    "pk": 1,
+    "fields": {
       "password": "pbkdf2_sha256$180000$R75Q8xSNoHyC$nJPj/dYmjr/wI0JtyJVhNAOHYHT9kr/z9y+IvVD2Nnw=",
       "last_login": "2020-05-06T09:38:40.742Z",
       "is_superuser": true,
@@ -11,41 +89,252 @@
       "is_active": true,
       "date_joined": "2020-05-05T09:18:37.667Z",
       "groups": [],
-      "user_permissions": []}},
- {"model": "restapi.user", "pk": 2,
-  "fields": {"password": "pbkdf2_sha256$180000$XzHtmoMdLKL1$sbIgGEQoACzlUQGr7Hk0I69lx+dpPPBsi4+QRGbNHho=",
-             "last_login": null,
-             "is_superuser": false,
-             "username": "newbie",
-             "first_name": "",
-             "last_name": "",
-             "email": "",
-             "is_staff": false,
-             "is_active": true,
-             "date_joined": "2020-05-05T09:19:40.895Z",
-             "groups": [],
-             "user_permissions": []}},
- {"model": "restapi.user", "pk": 3,
-  "fields": {"password": "testpass1", "last_login": null, "is_superuser": false,
-             "username": "firstuser", "first_name": "", "last_name": "",
-             "email": "", "is_staff": false, "is_active": true,
-             "date_joined": "2020-05-07T07:17:38.269Z", "groups": [],
-             "user_permissions": []}}, {"model": "restapi.order", "pk": 1,
-                                        "fields": {
-                                            "or_start_date": "2020-05-05T09:40:00.502Z",
-                                            "or_is_finished": false,
-                                            "or_finish_date": null,
-                                            "or_is_sent": false,
-                                            "or_sent_date": null,
-                                            "or_username": 2}},
- {"model": "restapi.order", "pk": 2,
-  "fields": {"or_start_date": "2020-05-06T09:17:19.938Z", "or_is_finished": false, "or_finish_date": null,
-             "or_is_sent": false, "or_sent_date": null, "or_username": 2}}, {"model": "admin.logentry", "pk": 1,
-                                                                             "fields": {
-                                                                                 "action_time": "2020-05-05T09:19:41.105Z",
-                                                                                 "user": 1, "content_type": 6,
-                                                                                 "object_id": "2",
-                                                                                 "object_repr": "newbie",
-                                                                                 "action_flag": 1,
-                                                                                 "change_message": "[{\"added\": {}}]"}}
- ]
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "restapi.user",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$150000$oBOIVyYN40Eo$tsrymzCT1fhjU/jvRXGsl4TMUK0FleXcX0cutKuZW48=",
+      "last_login": "2020-05-08T06:31:47.023Z",
+      "is_superuser": false,
+      "username": "newbie",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2020-05-05T09:19:40.895Z",
+      "groups": [
+        2
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "restapi.user",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$150000$f9CB5ekjFtUN$FfNuflR45E4q6uegIgBq9/Ap4MA/6sUPbPScrTfqs8g=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "firstuser",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2020-05-07T07:17:38.269Z",
+      "groups": [
+        3
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "restapi.user",
+    "pk": 4,
+    "fields": {
+      "password": "pbkdf2_sha256$150000$nLBUjyGs9U41$PxtKkBIAGHcz+Jy3M8FlY0bGrgSSNSnTN56CbotfQaU=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "customer1",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2020-05-09T06:17:42.503Z",
+      "groups": [
+        3
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "restapi.user",
+    "pk": 5,
+    "fields": {
+      "password": "pbkdf2_sha256$150000$XpYLxIbJy5Qm$DbR6jWPLNfV6UwyPhw4dZWFpQ97PGibh8YsOgtB2Ee4=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "customer2",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2020-05-09T06:19:05.203Z",
+      "groups": [
+        3
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "restapi.user",
+    "pk": 6,
+    "fields": {
+      "password": "pbkdf2_sha256$150000$0YdpJVkEY38E$1WqftVMD7GUFvEH9Tnh7gOD6bIn4i6ECtHgxH6DidRY=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "emp1",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2020-05-09T06:20:03.853Z",
+      "groups": [
+        2
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "restapi.order",
+    "pk": 1,
+    "fields": {
+      "or_start_date": "2020-05-05T09:40:00.502Z",
+      "or_is_finished": false,
+      "or_finish_date": null,
+      "or_is_sent": false,
+      "or_sent_date": null,
+      "or_username": 2
+    }
+  },
+  {
+    "model": "restapi.order",
+    "pk": 2,
+    "fields": {
+      "or_start_date": "2020-05-06T09:17:19.938Z",
+      "or_is_finished": false,
+      "or_finish_date": null,
+      "or_is_sent": false,
+      "or_sent_date": null,
+      "or_username": 2
+    }
+  },
+  {
+    "model": "restapi.order",
+    "pk": 3,
+    "fields": {
+      "or_start_date": "2020-05-08T06:34:37.354Z",
+      "or_is_finished": false,
+      "or_finish_date": null,
+      "or_is_sent": false,
+      "or_sent_date": null,
+      "or_username": 2
+    }
+  },
+  {
+    "model": "restapi.order",
+    "pk": 4,
+    "fields": {
+      "or_start_date": "2020-05-08T06:35:11.364Z",
+      "or_is_finished": false,
+      "or_finish_date": null,
+      "or_is_sent": false,
+      "or_sent_date": null,
+      "or_username": 1
+    }
+  },
+  {
+    "model": "restapi.order",
+    "pk": 5,
+    "fields": {
+      "or_start_date": "2020-05-08T07:45:22.676Z",
+      "or_is_finished": true,
+      "or_finish_date": "2020-05-11T08:51:18.192Z",
+      "or_is_sent": false,
+      "or_sent_date": null,
+      "or_username": 3
+    }
+  },
+  {
+    "model": "restapi.order",
+    "pk": 6,
+    "fields": {
+      "or_start_date": "2020-05-08T07:50:57.526Z",
+      "or_is_finished": false,
+      "or_finish_date": null,
+      "or_is_sent": false,
+      "or_sent_date": null,
+      "or_username": 3
+    }
+  },
+  {
+    "model": "restapi.order",
+    "pk": 7,
+    "fields": {
+      "or_start_date": "2020-05-08T07:52:15.813Z",
+      "or_is_finished": false,
+      "or_finish_date": null,
+      "or_is_sent": false,
+      "or_sent_date": null,
+      "or_username": 2
+    }
+  },
+  {
+    "model": "restapi.order",
+    "pk": 8,
+    "fields": {
+      "or_start_date": "2020-05-08T07:53:43.274Z",
+      "or_is_finished": false,
+      "or_finish_date": null,
+      "or_is_sent": false,
+      "or_sent_date": null,
+      "or_username": 2
+    }
+  },
+  {
+    "model": "restapi.order",
+    "pk": 9,
+    "fields": {
+      "or_start_date": "2020-05-08T08:04:39.323Z",
+      "or_is_finished": false,
+      "or_finish_date": null,
+      "or_is_sent": false,
+      "or_sent_date": null,
+      "or_username": 2
+    }
+  },
+  {
+    "model": "restapi.order",
+    "pk": 10,
+    "fields": {
+      "or_start_date": "2020-05-08T08:06:33.299Z",
+      "or_is_finished": false,
+      "or_finish_date": null,
+      "or_is_sent": false,
+      "or_sent_date": null,
+      "or_username": 2
+    }
+  },
+  {
+    "model": "restapi.order",
+    "pk": 11,
+    "fields": {
+      "or_start_date": "2020-05-10T08:28:55.636Z",
+      "or_is_finished": false,
+      "or_finish_date": null,
+      "or_is_sent": false,
+      "or_sent_date": null,
+      "or_username": 3
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 1,
+    "fields": {
+      "action_time": "2020-05-05T09:19:41.105Z",
+      "user": 1,
+      "content_type": 6,
+      "object_id": "2",
+      "object_repr": "newbie",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  }
+]
