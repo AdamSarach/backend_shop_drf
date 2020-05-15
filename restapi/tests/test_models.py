@@ -14,8 +14,7 @@ class TestModelSupplier(APITestCase):
                                                      sup_address='Wiejska 12')
 
     def test_supplier_name(self):
-        self.assertEquals(self.test_supplier.sup_name, 'Pipes Inc.')
-        self.assertNotEquals(self.test_supplier.sup_name, 'NOT Pipes Inc.')
+        self.assertIsInstance(self.test_supplier, Supplier)
 
 
 class TestModelProduct(APITestCase):
@@ -34,8 +33,7 @@ class TestModelProduct(APITestCase):
                                                    pr_price=949.99)
 
     def test_product_name(self):
-        self.assertEquals(self.test_product.pr_name, '316 SS')
-        self.assertNotEquals(self.test_supplier.sup_name, 'NOT 316 SS')
+        self.assertIsInstance(self.test_product, Product)
         self.assertEquals(self.test_product.pr_sup.sup_id, self.test_supplier.sup_id)
 
 
@@ -47,8 +45,7 @@ class TestModelOrder(APITestCase):
         self.test_order = Order.objects.create(or_username=self.test_user)
 
     def test_order_username(self):
-        self.assertEquals(self.test_user.username, 'firstuser')
-        self.assertNotEquals(self.test_user.username, 'seconduser')
+        self.assertIsInstance(self.test_order, Order)
         self.assertIsNotNone(self.test_order.or_start_date)
 
 
@@ -75,4 +72,3 @@ class TestModelProductsInOrder(APITestCase):
                                                          pr_id=self.test_product,
                                                          amount=5)
         self.assertIsInstance(self.test_item, ProductsInOrders)
-
