@@ -18,7 +18,7 @@ class Supplier(models.Model):
     sup_name = models.CharField(max_length=50, unique=True)
     sup_status = models.CharField(max_length=30, blank=True)
     sup_email = models.EmailField()
-    sup_phone_number = models.IntegerField()
+    sup_phone_number = models.BigIntegerField()
     sup_postal_code = models.CharField(max_length=10)
     sup_city = models.CharField(max_length=50)
     sup_address = models.CharField(max_length=70)
