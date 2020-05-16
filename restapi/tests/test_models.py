@@ -1,6 +1,6 @@
 from rest_framework.test import APITestCase
 from restapi.models import Supplier, Product, User, Order, ProductsInOrders
-from restapi.factories import SupplierFactory
+from restapi.factories import SupplierFactory, ProductFactory
 
 
 class TestModelSupplier(APITestCase):
@@ -15,17 +15,8 @@ class TestModelSupplier(APITestCase):
 class TestModelProduct(APITestCase):
 
     def setUp(self):
-        self.test_supplier = Supplier.objects.create(sup_name='Pipes Inc.',
-                                                     sup_status='',
-                                                     sup_email='pipesinc@pipesinc.com',
-                                                     sup_phone_number=444555666,
-                                                     sup_postal_code='00-220',
-                                                     sup_city='Warsaw',
-                                                     sup_address='Wiejska 12')
-        self.test_product = Product.objects.create(pr_name='316 SS',
-                                                   pr_sup=self.test_supplier,
-                                                   pr_cat='PI',
-                                                   pr_price=949.99)
+        self.test_supplier = SupplierFactory()
+        self.test_product = ProductFactory(pr_sup=self.test_supplier)
 
     def test_product_name(self):
         self.assertIsInstance(self.test_product, Product)
