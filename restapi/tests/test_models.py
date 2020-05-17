@@ -1,6 +1,7 @@
 from rest_framework.test import APITestCase
 from restapi.models import Supplier, Product, User, Order, ProductsInOrders
-from restapi.factories import SupplierFactory, ProductFactory
+from restapi.factories import SupplierFactory, ProductFactory, UserFactory, OrderFactory, ProductsInOrdersFactory, \
+    GroupFactory
 
 
 class TestModelSupplier(APITestCase):
@@ -26,9 +27,8 @@ class TestModelProduct(APITestCase):
 class TestModelOrder(APITestCase):
 
     def setUp(self):
-        self.test_user = User.objects.create(username='firstuser',
-                                             password='testpass1')
-        self.test_order = Order.objects.create(or_username=self.test_user)
+        self.test_user = UserFactory()
+        self.test_order = OrderFactory(or_username=self.test_user)
 
     def test_order_username(self):
         self.assertIsInstance(self.test_order, Order)
@@ -38,23 +38,23 @@ class TestModelOrder(APITestCase):
 class TestModelProductsInOrder(APITestCase):
 
     def setUp(self):
-        self.test_user = User.objects.create(username='firstuser',
-                                             password='testpass1')
-        self.test_order = Order.objects.create(or_username=self.test_user)
-        self.test_supplier = Supplier.objects.create(sup_name='Pipes Inc.',
-                                                     sup_status='',
-                                                     sup_email='pipesinc@pipesinc.com',
-                                                     sup_phone_number=444555666,
-                                                     sup_postal_code='00-220',
-                                                     sup_city='Warsaw',
-                                                     sup_address='Wiejska 12')
-        self.test_product = Product.objects.create(pr_name='316 SS',
-                                                   pr_sup=self.test_supplier,
-                                                   pr_cat='PI',
-                                                   pr_price=949.99)
+        self.test_user = UserFactory()
+        self.test_order = OrderFactory(or_username=self.test_user)
+        self.test_supplier = SupplierFactory()
+        self.test_product = ProductFactory(pr_sup=self.test_supplier)
 
     def test_products_in_order_isinstance(self):
-        self.test_item = ProductsInOrders.objects.create(or_id=self.test_order,
-                                                         pr_id=self.test_product,
-                                                         amount=5)
+        self.test_item = ProductsInOrdersFactory(or_id=self.test_order, pr_id=self.test_product)
         self.assertIsInstance(self.test_item, ProductsInOrders)
+
+
+class TestModelUser(APITestCase):
+
+    def setUp(self):
+        self.group_employee = GroupFactory(name='employee')
+        self.user_employee = UserFactory()
+        self.user_employee.groups.add(self.group_employee)
+
+    def test_is_user_in_group(self):
+        self.assertEqual(self.user_employee.groups.filter(name='employee').exists(), True)
+        self.assertEqual(self.user_employee.groups.filter(name='customer').exists(), False)

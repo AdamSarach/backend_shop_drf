@@ -2,7 +2,12 @@ import factory
 from restapi.models import Supplier, Product, Order, User, ProductsInOrders
 from django.contrib.auth.models import Group
 import factory.fuzzy
-import datetime
+from datetime import datetime
+
+
+class GroupFactory (factory.django.DjangoModelFactory):
+    class Meta:
+        model = Group
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -10,7 +15,18 @@ class UserFactory(factory.django.DjangoModelFactory):
         model = User
 
     username = factory.Sequence(lambda n: 'User%d' % (n + 1))
-    password = 'abc123'
+    password = factory.PostGenerationMethodCall('set_password', 'abc123')
+    # password = 'abc123'
+
+    # @classmethod
+    # def _prepare(cls, create, **kwargs):
+    #     password = kwargs.pop('password', None)
+    #     user = super(UserFactory, cls)._prepare(create, **kwargs)
+    #     if password:
+    #         user.set_password(password)
+    #         if create:
+    #             user.save()
+    #     return user
 
 
 class SupplierFactory(factory.django.DjangoModelFactory):
@@ -54,3 +70,5 @@ class ProductsInOrdersFactory(factory.django.DjangoModelFactory):
     or_id = factory.SubFactory(UserFactory)
     pr_id = factory.SubFactory(UserFactory)
     amount = factory.fuzzy.FuzzyInteger(1, 1000)
+
+

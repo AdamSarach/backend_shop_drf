@@ -194,14 +194,19 @@ class OrderItemDetail(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk, format=None):
-        order = self.get_object(pk)
+    def delete(self, request, pk, item, format=None):
+        item_exist = self.get_object(item)
+        order = Order.objects.get(or_id=pk)
+
         if request.user.groups.filter(name='customer'):
             if not request.user == order.or_username:
                 return Response(self.order_wrong(), status=status.HTTP_400_BAD_REQUEST)
         elif request.user.groups.filter(name='employee'):
             pass
         else:
-            return Response(self.order_finished(), status=status.HTTP_400_BAD_REQUEST)
-        order.delete()
+            return Response({'message': 'No permission'}, status=status.HTTP_403_FORBIDDEN)
+
+        if order.or_is_finished:
+            Response(self.order_finished(), status=status.HTTP_400_BAD_REQUEST)
+        item_exist.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
