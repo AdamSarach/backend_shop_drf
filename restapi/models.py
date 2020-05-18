@@ -76,6 +76,9 @@ class Order(models.Model):
 
 
 class ProductsInOrders(models.Model):
+    class Meta:
+        unique_together = ['or_id', 'pr_id']
+
     or_id = models.ForeignKey(Order, on_delete=models.PROTECT, related_name='items_in_order', db_column='or_id')
     pr_id = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='chosen_products', db_column='pr_id')
     amount = models.IntegerField()

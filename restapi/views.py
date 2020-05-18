@@ -134,7 +134,6 @@ class OrderItemCreate(APIView):
     def order_finished(self):
         return {'message': 'Your order is already marked as finish. You cannot make any changes.'}
 
-
     def post(self, request, pk, format=None):
         order = Order.objects.get(or_id=pk)
         content = request.data
