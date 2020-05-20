@@ -1,4 +1,4 @@
-env/
+apienv/
 .idea/
 idea/
 __pycache__/
