@@ -10,9 +10,11 @@ services:
 
   backend:
     build: .
-    command: python manage.py makemigrations
-      && python manage.py migrate
-      && python manage.py runserver 0.0.0.0:8000
+    command:
+      \usr\bin\sh -c "pwd
+      && ls -l
+      && ./wait_for_db.sh
+      && pwd"
     volumes:
       - .:/code
     ports:

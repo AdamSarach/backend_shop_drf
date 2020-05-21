@@ -4,3 +4,5 @@ RUN mkdir /code
 WORKDIR /code
 COPY . /code
 RUN pip install -r requirements.txt
+COPY wait_for_db.sh /wait_for_db.sh
+RUN chmod +x /wait_for_db.sh
