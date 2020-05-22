@@ -8,13 +8,14 @@ services:
     env_file:
       - ./.env
 
-  backend:
+  web:
     build: .
     command:
-      \usr\bin\sh -c "pwd
-      && ls -l
+      sh -c "chmod +x wait_for_db.sh
       && ./wait_for_db.sh
-      && pwd"
+      && python manage.py makemigrations
+      && python manage.py migrate
+      && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
     ports:
