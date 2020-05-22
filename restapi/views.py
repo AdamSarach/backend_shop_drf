@@ -8,6 +8,7 @@ from rest_framework import status
 from django.http import Http404
 from django.utils import timezone
 
+
 from restapi.models import Supplier, Product, Order, ProductsInOrders
 from restapi.serializers import SupplierSerializer, ProductSerializer, OrderSerializer, \
     OrderProductsSerializer, OrderGetSerializer, ProductsInOrdersSerializer
@@ -133,7 +134,6 @@ class OrderItemCreate(APIView):
 
     def order_finished(self):
         return {'message': 'Your order is already marked as finish. You cannot make any changes.'}
-
 
     def post(self, request, pk, format=None):
         order = Order.objects.get(or_id=pk)

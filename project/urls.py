@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from restapi import views
 from rest_framework.urlpatterns import format_suffix_patterns
-# from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -15,8 +15,8 @@ urlpatterns = [
     path('api/orders/<int:pk>', views.OrderDetail.as_view(), name='order-detail'),
     path('api/orders/<int:pk>/items', views.OrderItemCreate.as_view(), name='order-item'),
     path('api/orders/<int:pk>/items/<int:item>', views.OrderItemDetail.as_view(), name='order-item-detail'),
-    # path('api/token/', TokenObtainPairView.as_view()),
-    # path('api/token/refresh/', TokenRefreshView.as_view()),
+    path('api/token/', TokenObtainPairView.as_view()),
+    path('api/token/refresh/', TokenRefreshView.as_view()),
     path('api/api-auth/', include('rest_framework.urls')),
 
 ]

@@ -332,13 +332,38 @@ class TestOrderItemsView(APITestCase):
         self.test_order4 = OrderFactory(or_username=self.user_employee)
         self.test_supplier = SupplierFactory()
         self.test_product1 = ProductFactory(pr_sup=self.test_supplier)
+        self.test_product2 = ProductFactory(pr_sup=self.test_supplier)
         self.url = reverse('order-item', kwargs={'pk': self.test_order1.or_id})
+        self.url_another_customer = reverse('order-item', kwargs={'pk': self.test_order3.or_id})
+        self.url_finished = reverse('order-item', kwargs={'pk': self.test_order2.or_id})
 
     def test_order_item_create_employee(self):
         self.client.login(username=self.user_employee.username, password=self.pwd)
-        self.data_valid = {"pr_id": 1, "amount": 25}
-        response_valid = self.client.post(self.url, self.data_valid, format='json')
+        self.data = {"pr_id": self.test_product2.pr_id, "amount": 25}
+        response_valid = self.client.post(self.url, self.data, format='json')
         self.assertEqual(response_valid.status_code, status.HTTP_201_CREATED)
+
+    def test_order_item_create_customer(self):
+        self.client.login(username=self.user_customer1.username, password=self.pwd)
+        self.data = {"pr_id": self.test_product2.pr_id, "amount": 25}
+        response_valid = self.client.post(self.url, self.data, format='json')
+        self.assertEqual(response_valid.status_code, status.HTTP_201_CREATED)
+        response_invalid = self.client.post(self.url_another_customer, self.data, format='json')
+        self.assertEqual(response_invalid.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_order_item_check_uniqueness(self):
+        self.client.login(username=self.user_employee.username, password=self.pwd)
+        self.pio1 = ProductsInOrdersFactory(or_id=self.test_order1,
+                                            pr_id=self.test_product1)
+        self.data = {"pr_id": self.test_product1.pr_id, "amount": self.pio1.amount}
+        response = self.client.post(self.url, self.data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_order_item_check_finished_order(self):
+        self.client.login(username=self.user_employee.username, password=self.pwd)
+        self.data = {"pr_id": self.test_product2.pr_id, "amount": 25}
+        response_valid = self.client.post(self.url_finished, self.data, format='json')
+        self.assertEqual(response_valid.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class TestOrderItemDetailView(APITestCase):
