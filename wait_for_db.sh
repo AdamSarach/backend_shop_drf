@@ -1,6 +1,5 @@
-#!usr/bin/sh
+#!/bin/sh
 # wait_for_db.sh - run by docker-compose
-
 until nc -z $POSTGRES_HOST $POSTGRES_PORT
 do
  echo Waiting... $POSTGRES_HOST
