@@ -16,7 +16,15 @@ from restapi.permissions import IsOrderOwner, IsEmployeeGroup, IsCustomerGroup, 
 
 
 def index(request):
-    return HttpResponse("Api page.")
+    return HttpResponse(
+        'This is API home page. <br> To find more, check GitHub Repository <br>'
+        '<a href="https://github.com/adamsarach/restapi.git">GITHUB</a> <br><br>'
+        'Logins and password for users from fixtures: <br>'
+        'employee1 / emp1  <br>'
+        'customer1 / cust1  <br>'
+        'customer2 / cust2  <br>'
+        'customer3 / cust3'
+    )
 
 
 class SupplierList(generics.ListCreateAPIView):
