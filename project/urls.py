@@ -15,8 +15,8 @@ urlpatterns = [
     path('api/orders/<int:pk>', views.OrderDetail.as_view(), name='order-detail'),
     path('api/orders/<int:pk>/items', views.OrderItemCreate.as_view(), name='order-item'),
     path('api/orders/<int:pk>/items/<int:item>', views.OrderItemDetail.as_view(), name='order-item-detail'),
-    path('api/token/', TokenObtainPairView.as_view()),
-    path('api/token/refresh/', TokenRefreshView.as_view()),
+    path('api/token/', TokenObtainPairView.as_view(), name='token'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='refresh-token'),
     path('api/api-auth/', include('rest_framework.urls')),
 
 ]
