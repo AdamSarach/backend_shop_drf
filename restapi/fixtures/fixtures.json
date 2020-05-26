@@ -78,10 +78,10 @@
     "model": "restapi.user",
     "pk": 1,
     "fields": {
-      "password": "pbkdf2_sha256$180000$R75Q8xSNoHyC$nJPj/dYmjr/wI0JtyJVhNAOHYHT9kr/z9y+IvVD2Nnw=",
+      "password": "pbkdf2_sha256$180000$L7Z1dE9Xp4yh$MSAEoa6W7mPXWSwV6StZSlBpHnyDQfJ2EDs7/BfQylo=",
       "last_login": "2020-05-06T09:38:40.742Z",
       "is_superuser": true,
-      "username": "adam",
+      "username": "admin",
       "first_name": "",
       "last_name": "",
       "email": "",
@@ -96,10 +96,10 @@
     "model": "restapi.user",
     "pk": 2,
     "fields": {
-      "password": "pbkdf2_sha256$150000$oBOIVyYN40Eo$tsrymzCT1fhjU/jvRXGsl4TMUK0FleXcX0cutKuZW48=",
+      "password": "pbkdf2_sha256$180000$tcxCCekFihnw$7lEPhpK9OhS6MQDupoo6DpMz3UwWSD7os2AKRsyEVsA=",
       "last_login": "2020-05-08T06:31:47.023Z",
       "is_superuser": false,
-      "username": "newbie",
+      "username": "employee1",
       "first_name": "",
       "last_name": "",
       "email": "",
@@ -116,10 +116,10 @@
     "model": "restapi.user",
     "pk": 3,
     "fields": {
-      "password": "pbkdf2_sha256$150000$f9CB5ekjFtUN$FfNuflR45E4q6uegIgBq9/Ap4MA/6sUPbPScrTfqs8g=",
+      "password": "pbkdf2_sha256$180000$0UisY0q5Lz2R$OTUYuQW7K0J00HJXbFYvU7Rb43VlSOFYBnZdHMLjbkM=",
       "last_login": null,
       "is_superuser": false,
-      "username": "firstuser",
+      "username": "customer1",
       "first_name": "",
       "last_name": "",
       "email": "",
@@ -136,10 +136,10 @@
     "model": "restapi.user",
     "pk": 4,
     "fields": {
-      "password": "pbkdf2_sha256$150000$nLBUjyGs9U41$PxtKkBIAGHcz+Jy3M8FlY0bGrgSSNSnTN56CbotfQaU=",
+      "password": "pbkdf2_sha256$180000$nwhPhvB9sUhQ$keJguIjD4olLCf4gwyacVnTkipmqeFMxRjau/wale8I=",
       "last_login": null,
       "is_superuser": false,
-      "username": "customer1",
+      "username": "customer2",
       "first_name": "",
       "last_name": "",
       "email": "",
@@ -156,10 +156,10 @@
     "model": "restapi.user",
     "pk": 5,
     "fields": {
-      "password": "pbkdf2_sha256$150000$XpYLxIbJy5Qm$DbR6jWPLNfV6UwyPhw4dZWFpQ97PGibh8YsOgtB2Ee4=",
+      "password": "pbkdf2_sha256$180000$sfcfOM0ODb9u$nWVjXG/cu9LmXe49oljd9Cm18G/IfcY1Zi6+LCTbxDk=",
       "last_login": null,
       "is_superuser": false,
-      "username": "customer2",
+      "username": "customer3",
       "first_name": "",
       "last_name": "",
       "email": "",
@@ -168,26 +168,6 @@
       "date_joined": "2020-05-09T06:19:05.203Z",
       "groups": [
         3
-      ],
-      "user_permissions": []
-    }
-  },
-  {
-    "model": "restapi.user",
-    "pk": 6,
-    "fields": {
-      "password": "pbkdf2_sha256$150000$0YdpJVkEY38E$1WqftVMD7GUFvEH9Tnh7gOD6bIn4i6ECtHgxH6DidRY=",
-      "last_login": null,
-      "is_superuser": false,
-      "username": "emp1",
-      "first_name": "",
-      "last_name": "",
-      "email": "",
-      "is_staff": false,
-      "is_active": true,
-      "date_joined": "2020-05-09T06:20:03.853Z",
-      "groups": [
-        2
       ],
       "user_permissions": []
     }
@@ -250,91 +230,6 @@
       "or_is_sent": false,
       "or_sent_date": null,
       "or_username": 3
-    }
-  },
-  {
-    "model": "restapi.order",
-    "pk": 6,
-    "fields": {
-      "or_start_date": "2020-05-08T07:50:57.526Z",
-      "or_is_finished": false,
-      "or_finish_date": null,
-      "or_is_sent": false,
-      "or_sent_date": null,
-      "or_username": 3
-    }
-  },
-  {
-    "model": "restapi.order",
-    "pk": 7,
-    "fields": {
-      "or_start_date": "2020-05-08T07:52:15.813Z",
-      "or_is_finished": false,
-      "or_finish_date": null,
-      "or_is_sent": false,
-      "or_sent_date": null,
-      "or_username": 2
-    }
-  },
-  {
-    "model": "restapi.order",
-    "pk": 8,
-    "fields": {
-      "or_start_date": "2020-05-08T07:53:43.274Z",
-      "or_is_finished": false,
-      "or_finish_date": null,
-      "or_is_sent": false,
-      "or_sent_date": null,
-      "or_username": 2
-    }
-  },
-  {
-    "model": "restapi.order",
-    "pk": 9,
-    "fields": {
-      "or_start_date": "2020-05-08T08:04:39.323Z",
-      "or_is_finished": false,
-      "or_finish_date": null,
-      "or_is_sent": false,
-      "or_sent_date": null,
-      "or_username": 2
-    }
-  },
-  {
-    "model": "restapi.order",
-    "pk": 10,
-    "fields": {
-      "or_start_date": "2020-05-08T08:06:33.299Z",
-      "or_is_finished": false,
-      "or_finish_date": null,
-      "or_is_sent": false,
-      "or_sent_date": null,
-      "or_username": 2
-    }
-  },
-  {
-    "model": "restapi.order",
-    "pk": 11,
-    "fields": {
-      "or_start_date": "2020-05-10T08:28:55.636Z",
-      "or_is_finished": false,
-      "or_finish_date": null,
-      "or_is_sent": false,
-      "or_sent_date": null,
-      "or_username": 3
-    }
-  },
-  {
-    "model": "admin.logentry",
-    "pk": 1,
-    "fields": {
-      "action_time": "2020-05-05T09:19:41.105Z",
-      "user": 1,
-      "content_type": 6,
-      "object_id": "2",
-      "object_repr": "newbie",
-      "action_flag": 1,
-      "change_message": "[{\"added\": {}}]"
     }
   }
 ]

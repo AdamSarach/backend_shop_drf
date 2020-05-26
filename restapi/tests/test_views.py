@@ -45,12 +45,18 @@ class TestSupplierListView(APITestCase):
         self.user_employee.groups.add(self.group_employee)
         self.client.login(username=self.user_employee.username, password=self.pwd)
         self.url = reverse('supplier-list')
+        self.url_token = reverse('token')
 
     def test_supplier_list_create(self):
-        self.assertTrue(self.client.login(username=self.user_employee.username, password=self.pwd))
-        response_valid = self.client.post(self.url, self.data_valid, format='json')
+        self.user_token = self.client.post(
+            self.url_token,
+            data={'username': self.user_employee.username, 'password': self.pwd}).data['access']
+        self.user_header = 'Bearer ' + self.user_token
+
+        # self.assertTrue(self.client.login(username=self.user_employee.username, password=self.pwd))
+        response_valid = self.client.post(self.url, self.data_valid, format='json', HTTP_AUTHORIZATION=self.user_header)
         self.assertEqual(response_valid.status_code, status.HTTP_201_CREATED)
-        response_invalid = self.client.post(self.url, self.data_invalid, format='json')
+        response_invalid = self.client.post(self.url, self.data_invalid, format='json', HTTP_AUTHORIZATION=self.user_header)
         self.assertEqual(response_invalid.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_supplier_list_retrieve(self):
