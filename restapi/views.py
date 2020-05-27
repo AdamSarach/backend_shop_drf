@@ -215,6 +215,6 @@ class OrderItemDetail(APIView):
             return Response({'message': 'No permission'}, status=status.HTTP_403_FORBIDDEN)
 
         if order.or_is_finished:
-            Response(self.order_finished(), status=status.HTTP_400_BAD_REQUEST)
+            return Response(self.order_finished(), status=status.HTTP_400_BAD_REQUEST)
         item_exist.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
