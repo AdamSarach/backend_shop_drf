@@ -1,18 +1,20 @@
-from rest_framework.test import APIRequestFactory
 from rest_framework.test import APIClient
-from rest_framework.test import RequestsClient
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
-from rest_framework.permissions import IsAuthenticated
-from django.utils import timezone
 
-from restapi.models import Supplier, Product, Order, User, ProductsInOrders
+from restapi.models import Supplier, Product, Order
 from restapi.serializers import SupplierSerializer, ProductSerializer, OrderSerializer, ProductsInOrdersSerializer
-from django.contrib.auth.models import Group
 from restapi.factories import GroupFactory, UserFactory, SupplierFactory, ProductFactory, OrderFactory, \
     ProductsInOrdersFactory
 
+'''
+Naming acc. following key:
+Class (PascalCase):
+'Test' + name_of_model_view_is_based_on + ('List' or 'Detail') + View
+Method (snake_case):
+'test' + name_of_model_view_is_based_on + ('list' or 'detail') + CRUD_method + test_user_group + (optional)
+'''
 
 class TestSupplierListView(APITestCase):
 
@@ -449,7 +451,11 @@ class TestOrderItemDetailView(APITestCase):
                                            pr_id=cls.test_product2)
         cls.pio3 = ProductsInOrdersFactory(or_id=cls.test_order2,
                                            pr_id=cls.test_product2)
+        cls.pio4 = ProductsInOrdersFactory(or_id=cls.test_order3,
+                                           pr_id=cls.test_product2)
         cls.url = reverse('order-item-detail', kwargs={'pk': cls.test_order1.or_id, 'item': cls.pio1.id})
+        cls.url_other_customer = reverse('order-item-detail', kwargs={'pk': cls.test_order3.or_id, 'item': cls.pio4.id})
+        cls.url_order_finished = reverse('order-item-detail', kwargs={'pk': cls.test_order2.or_id, 'item': cls.pio3.id})
         cls.url_token = reverse('token')
 
     def setUp(self):
@@ -474,3 +480,39 @@ class TestOrderItemDetailView(APITestCase):
     def test_order_item_detail_delete_employee(self):
         response = self.client.delete(self.url, HTTP_AUTHORIZATION=self.user_header_employee)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_order_item_detail_update_customer(self):
+        self.data = ProductsInOrdersSerializer(self.pio1).data
+        self.data.update({'amount': 5})
+        response = self.client.put(
+            reverse('order-item-detail', kwargs={'pk': self.test_order1.or_id, 'item': self.pio1.id}),
+            self.data, format='json', HTTP_AUTHORIZATION=self.user_header_customer1)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_order_item_detail_update_customer_finished_order(self):
+        self.data = ProductsInOrdersSerializer(self.pio3).data
+        self.data.update({'amount': 5})
+        response = self.client.put(
+            reverse('order-item-detail', kwargs={'pk': self.test_order1.or_id, 'item': self.pio1.id}),
+            self.data, format='json', HTTP_AUTHORIZATION=self.user_header_customer1)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_order_item_detail_update_customer_other(self):
+        self.data = ProductsInOrdersSerializer(self.pio4).data
+        self.data.update({'amount': 5})
+        response = self.client.put(
+            reverse('order-item-detail', kwargs={'pk': self.test_order1.or_id, 'item': self.pio1.id}),
+            self.data, format='json', HTTP_AUTHORIZATION=self.user_header_customer1)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_order_item_detail_delete_customer(self):
+        response = self.client.delete(self.url, HTTP_AUTHORIZATION=self.user_header_customer1)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_order_item_detail_delete_customer_other(self):
+        response = self.client.delete(self.url_other_customer, HTTP_AUTHORIZATION=self.user_header_customer1)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_order_item_detail_delete_customer_finished_order(self):
+        response = self.client.delete(self.url_order_finished, HTTP_AUTHORIZATION=self.user_header_customer1)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

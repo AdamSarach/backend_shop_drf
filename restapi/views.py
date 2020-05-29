@@ -1,9 +1,7 @@
-from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework import generics, permissions
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.http import Http404
 from django.utils import timezone
@@ -215,6 +213,6 @@ class OrderItemDetail(APIView):
             return Response({'message': 'No permission'}, status=status.HTTP_403_FORBIDDEN)
 
         if order.or_is_finished:
-            Response(self.order_finished(), status=status.HTTP_400_BAD_REQUEST)
+            return Response(self.order_finished(), status=status.HTTP_400_BAD_REQUEST)
         item_exist.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
