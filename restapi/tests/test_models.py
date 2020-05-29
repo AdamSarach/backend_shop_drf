@@ -1,5 +1,5 @@
 from rest_framework.test import APITestCase
-from restapi.models import Supplier, Product, User, Order, ProductsInOrders
+from restapi.models import Supplier, Product, Order, ProductsInOrders
 from restapi.factories import SupplierFactory, ProductFactory, UserFactory, OrderFactory, ProductsInOrdersFactory, \
     GroupFactory
 

@@ -87,7 +87,9 @@ DATABASES = {
     }
 }
 
-# # Only for test db creation
+# # Only for tests with venv
+#
+# db creation
 #
 # DATABASES = {
 #     'default': {
@@ -95,9 +97,9 @@ DATABASES = {
 #         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
-
-if 'test' in sys.argv or 'test_coverage' in sys.argv:
-    DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'
+# use sqlite as a test db
+# if 'test' in sys.argv or 'test_coverage' in sys.argv:
+#     DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'
 
 
 

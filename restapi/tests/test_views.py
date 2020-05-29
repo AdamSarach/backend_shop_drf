@@ -1,23 +1,20 @@
-from rest_framework.test import APIRequestFactory
 from rest_framework.test import APIClient
-from rest_framework.test import RequestsClient
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
-from rest_framework.permissions import IsAuthenticated
-from django.utils import timezone
 
-from restapi.models import Supplier, Product, Order, User, ProductsInOrders
+from restapi.models import Supplier, Product, Order
 from restapi.serializers import SupplierSerializer, ProductSerializer, OrderSerializer, ProductsInOrdersSerializer
-from django.contrib.auth.models import Group
 from restapi.factories import GroupFactory, UserFactory, SupplierFactory, ProductFactory, OrderFactory, \
     ProductsInOrdersFactory
 
-# Naming acc. following key:
-# Class (PascalCase):
-# 'Test' + name_of_model_view_is_based_on + ('List' or 'Detail') + View
-# Method (snake_case):
-# 'test' + name_of_model_view_is_based_on + ('list' or 'detail') + CRUD_method + test_user_group + (optional)
+'''
+Naming acc. following key:
+Class (PascalCase):
+'Test' + name_of_model_view_is_based_on + ('List' or 'Detail') + View
+Method (snake_case):
+'test' + name_of_model_view_is_based_on + ('list' or 'detail') + CRUD_method + test_user_group + (optional)
+'''
 
 class TestSupplierListView(APITestCase):
 
