@@ -1,10 +1,17 @@
-# Piping Components Online Store REST API
+# Online Store REST API
 
 Project cannot be used with commercial purpose without owner permission.
 
-An application uses Django and Django Rest Framework. Created application is a REST API which allows maintain data for running bussiness.
+Created application is a REST API which allows maintain data for running bussiness (with piping elements).
+Technology stack:
+* Python 3
+* Django
+* Django Rest Framework
+* Docker
+* PostreSQL
+* Others...
 
-Table of content:
+How to use application - table of content:
 ```
 1. Download repository
 2. Run project
